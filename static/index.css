@@ -1,0 +1,11 @@
+
+body {
+    background-color: #ededed;
+    text-align: center;
+}
+
+#map {
+    height : 90vh;
+    width : 100vw;
+    margin : auto;
+}
