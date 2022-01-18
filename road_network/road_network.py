@@ -1,48 +1,29 @@
 from __future__ import annotations
-import matplotlib.pyplot as plt
 from matplotlib import collections
-from road_network.base_classes import Point, Path
-from dataclasses import dataclass, field
-import overpy
+from road_network.base_classes import Point, Node, Tile
+from road_network.earth_subdivision import point_to_tile
+from road_network.network_db import NetworkDB
 
 
 class RoadNetwork:
-    @dataclass
-    class Edge:
-        to_node: RoadNetwork.Node
-        path: Path
-
-    @dataclass
-    class Node(Point):
-        neighbors: list[RoadNetwork.Edge] = field(default_factory=list)
-
-        def __init__(self, overpy_node: overpy.Node):
-            super().__init__(overpy_node)
-            self.neighbors = []
-
     nodes: dict[int, Node]
+    loaded_tiles: set[Tile]
+    network_db: NetworkDB = NetworkDB()
 
-    def __init__(self, query_res: overpy.Result):
+    def __init__(self):
+        self.loaded_tiles = set()
         self.nodes = {}
-        node_to_way = {}
-        for way in query_res.get_ways():
-            for node in way.get_nodes():
-                node_to_way.setdefault(node.id, list())
-                node_to_way[node.id].append(way.id)
-        for way in query_res.get_ways():
-            cur_path = Path()
-            last_node = None
-            for i, node in enumerate(way.get_nodes()):
-                cur_path.points.append(Point(node))
-                if len(node_to_way[node.id]) > 1 or i == 0 or i == len(way.get_nodes()) - 1:
-                    cur_node = self.nodes.setdefault(node.id, self.Node(node))
-                    if last_node is not None:
-                        last_node.neighbors.append(self.Edge(cur_node, cur_path))
-                        cur_node.neighbors.append(self.Edge(last_node, Path(cur_path.points[::-1])))
-                        cur_path = Path([cur_node])
-                    last_node = cur_node
+
+    def get(self, node_id: int, loc: Point):
+        if node_id not in self.nodes:
+            self.nodes.update(self.network_db.get_tile(loc))
+        return self.nodes[node_id]
 
     def get_nearest_node(self, target: Point) -> tuple[float, Node]:
+        tile = point_to_tile(target)
+        if tile not in self.loaded_tiles:
+            self.nodes.update(self.network_db.get_tile(target))
+        self.loaded_tiles.add(tile)
         min_dist = float("+inf")
         nearest_node = None
         for node in self.nodes.values():
@@ -58,11 +39,11 @@ class RoadNetwork:
         nodes_y = []
         segments = []
         for node in self.nodes.values():
-            nodes_x.append(node.lon)
+            nodes_x.append(node.lng)
             nodes_y.append(node.lat)
             for edge in node.neighbors:
                 for (from_p, to_p) in zip(edge.path.points, edge.path.points[1:]):
-                    segments.append([(from_p.lon, from_p.lat), (to_p.lon, to_p.lat)])
+                    segments.append([(from_p.lng, from_p.lat), (to_p.lng, to_p.lat)])
         lc = collections.LineCollection(segments, linewidths=2, colors='#5490E3')
         ax.add_collection(lc)
         # ax.autoscale()

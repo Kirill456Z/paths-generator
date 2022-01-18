@@ -3,7 +3,7 @@ import pickle
 
 
 class ApiBuffer:
-    dump_file: str = "last_q.dmp"
+    dump_file: str = "../last_q.dmp"
 
     def make_query(self, query: str) -> overpy.Result:
         api = overpy.Overpass()
