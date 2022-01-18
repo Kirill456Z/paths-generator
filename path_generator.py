@@ -1,6 +1,5 @@
 from road_network.road_network import RoadNetwork
 from road_network.base_classes import Point, Path, Node
-from road_network.api_buffer import ApiBuffer
 from random import choice
 from matplotlib import collections
 import matplotlib.pyplot as plt

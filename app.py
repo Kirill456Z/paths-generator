@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from path_generator import PathGenerator
 from road_network.base_classes import Point
-from time import time
+import os
 
 app = Flask(__name__)
 pg = PathGenerator()
@@ -23,4 +23,4 @@ def show_coords():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(port=os.environ.get("PORT", 80))

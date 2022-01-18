@@ -18,7 +18,8 @@ var spin_loader = `
 
 var token = "pk.eyJ1Ijoia2lyaWxsNDU2eiIsImEiOiJja3kxc3BlbGswOXY3MnJueTdtNDJ5bG8xIn0.qbnJrnDNsML_nlCeFhE-dQ"
 var map = L.map('map').setView([55.752101, 37.620923], 13);
-var url = "http://192.168.0.102:5000/"
+var url = window.location.href
+console.log(window.location.href)
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + token, {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',

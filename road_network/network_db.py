@@ -6,14 +6,14 @@ from road_network.overpass_query import make_query
 import datetime
 import os
 
-USERNAME = os.environ.get("USERNAME")
+USER = os.environ.get("USER")
 PASSWORD = os.environ.get("PASSWORD")
 
 
 class NetworkDB:
 
     def __init__(self):
-        self.client = MongoClient("mongodb+srv://path-gen-cluster0.nvadu.mongodb.net/path-gen", username=USERNAME,
+        self.client = MongoClient("mongodb+srv://path-gen-cluster0.nvadu.mongodb.net/path-gen", username=USER,
                                   password=PASSWORD)
         try:
             self.client.admin.command('ping')

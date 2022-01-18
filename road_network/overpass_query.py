@@ -1,6 +1,5 @@
 import overpy
 from road_network.base_classes import *
-from road_network.api_buffer import ApiBuffer
 
 QUERY_FSTR = """  way{}["highway"];
             (._;>;);
